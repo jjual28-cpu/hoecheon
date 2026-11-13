@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>시험 모드 접수 목록</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body{padding-bottom:0;background:var(--ivory)}
+  .top{background:var(--navy);color:#fff;padding:28px 0;text-align:center}
+  .top h1{font-size:24px;font-weight:800}
+  .top p{color:var(--on-navy-2);font-size:14px;margin-top:6px}
+  .bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:20px 0}
+  .bar .btn{height:42px;font-size:14px;padding:0 18px}
+  .tbl{overflow-x:auto;background:#fff;box-shadow:var(--shadow);margin-bottom:28px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:720px}
+  th,td{padding:10px 8px;text-align:left;vertical-align:top}
+  th{background:var(--navy);color:#fff;font-weight:700;white-space:nowrap}
+  tr:nth-child(even) td{background:#f7f6f2}
+  h2{font-size:20px;font-weight:800;margin:10px 0}
+  .empty{padding:22px;text-align:center;color:var(--ink-2)}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<div class="top"><h1>시험 모드 접수 목록</h1><p id="mode"></p></div>
+<div class="wrap">
+  <div class="bar">
+    <button class="btn btn-navy" id="csvLead">관심고객 CSV 내려받기</button>
+    <button class="btn btn-navy" id="csvRef">소개자 CSV 내려받기</button>
+    <button class="btn btn-white" id="clear" style="box-shadow:var(--shadow)">이 기기 목록 비우기</button>
+  </div>
+  <h2>관심고객 <span id="nLead" class="num"></span></h2>
+  <div class="tbl" id="tLead"></div>
+  <h2>소개자 <span id="nRef" class="num"></span></h2>
+  <div class="tbl" id="tRef"></div>
+</div>
+<script src="js/common.js"></script>
+<script>
+(function () {
+  var HC = window.HC, $ = function (id) { return document.getElementById(id); };
+  var LEAD_COLS = [["time","접수 시간"],["channel","경로"],["name","이름"],["phone","전화"],["visitDate","방문 희망일"],["unitType","관심 타입"],["message","메모"],["utm_source","utm_source"],["utm_campaign","utm_campaign"],["ref","소개 코드"]];
+  var REF_COLS = [["time","등록 시간"],["name","이름"],["phone","전화"],["code","소개 코드"],["link","소개 링크"]];
+  $("mode").textContent = HC.testMode ? "Apps Script 주소가 비어 있어 이 브라우저에 저장된 것만 보입니다." : "시트가 연결되어 있습니다. 실제 접수는 구글 시트에서 확인하세요. (아래는 전송 실패 시 이 기기 백업)";
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  function table(list, cols) {
+    if (!list.length) return "<p class='empty'>아직 없습니다.</p>";
+    return "<table><thead><tr>" + cols.map(function (c) { return "<th>" + c[1] + "</th>"; }).join("") + "</tr></thead><tbody>" +
+      list.slice().reverse().map(function (r) { return "<tr>" + cols.map(function (c) { var v = r[c[0]]; if (c[0] === "time" && v) { try { v = new Date(v).toLocaleString("ko-KR"); } catch (e) {} } return "<td>" + esc(v) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
+  }
+  function render() {
+    var L = HC.store.get("hc_leads", []), R = HC.store.get("hc_referrers", []);
+    if (!Array.isArray(L)) L = []; if (!Array.isArray(R)) R = [];
+    $("nLead").textContent = L.length + "건"; $("nRef").textContent = R.length + "건";
+    $("tLead").innerHTML = table(L, LEAD_COLS); $("tRef").innerHTML = table(R, REF_COLS);
+  }
+  function csv(list, cols, name) {
+    var q = function (v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; };
+    var body = [cols.map(function (c) { return q(c[1]); }).join(",")].concat(list.map(function (r) { return cols.map(function (c) { return q(r[c[0]]); }).join(","); })).join("\r\n");
+    var blob = new Blob(["﻿" + body], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + "_" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  $("csvLead").onclick = function () { csv(HC.store.get("hc_leads", []) || [], LEAD_COLS, "leads"); };
+  $("csvRef").onclick = function () { csv(HC.store.get("hc_referrers", []) || [], REF_COLS, "referrers"); };
+  $("clear").onclick = function () { if (confirm("이 기기에 저장된 목록을 모두 지울까요? (구글 시트에는 영향 없음)")) { HC.store.set("hc_leads", []); HC.store.set("hc_referrers", []); render(); } };
+  render();
+})();
+</script>
+</body>
+</html>

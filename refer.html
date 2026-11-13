@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>지인 소개 링크 만들기 | GTX회천 대광로제비앙 모아엘가</title>
+<meta name="theme-color" content="#14182a">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* 소개 링크 페이지 (index 와 같은 톤) */
+  body{background:var(--ivory)}
+  .rhero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:var(--ivory)}
+  .rhero-text{display:flex;align-items:center;justify-content:center;padding:80px 56px 80px max(var(--gut),calc((100vw - var(--wrap))/2 + var(--gut)))}
+  .rhero-text>div{max-width:520px;width:100%}
+  .rhero h1{font-size:52px;line-height:1.16;letter-spacing:-.055em;font-weight:800}
+  .rhero h1 .thin{font-size:.66em;margin-bottom:8px}
+  .rhero p.sub{margin-top:20px;font-size:18px;color:var(--sub)}
+  .rhero-photo{position:relative;min-height:520px;overflow:hidden}
+  .rhero-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%}
+  .rbody{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:40px;align-items:start;padding-top:80px;padding-bottom:110px}
+  .rbody .form{align-self:start}
+  .rbody .form h2{font-size:26px;letter-spacing:-.045em;margin-bottom:22px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--stone);box-shadow:var(--shadow-s)}
+  .steps div{background:#fff;padding:22px 10px;text-align:center}
+  .steps b{display:block;font-size:30px;font-weight:200;line-height:1;color:var(--ink);letter-spacing:-.04em}
+  .steps span{display:block;font-size:14px;font-weight:600;margin-top:10px}
+  .reward{background:var(--ink);color:var(--on-ink);padding:34px 32px;margin-bottom:20px}
+  .reward #rwNote{display:block;font-size:15.5px;color:var(--on-ink-2)}
+  .reward b{display:block;font-size:28px;font-weight:800;color:#fff;margin-top:10px;letter-spacing:-.045em;line-height:1.25}
+  .out{background:var(--ink);color:#fff;padding:28px 24px}
+  .out .lbl{text-align:center;font-size:13.5px;color:var(--on-ink-2)}
+  .out .code{font-size:44px;font-weight:800;letter-spacing:.06em;text-align:center;margin-top:4px}
+  .out .link{background:var(--ink-2);padding:14px;font-size:14px;word-break:break-all;margin:16px 0}
+  .out .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .out .btn{height:50px;font-size:15px;padding:0 10px}
+  @media (max-width:767px){
+    .rhero{grid-template-columns:1fr}
+    .rhero-photo{order:-1;min-height:0;aspect-ratio:4/3}
+    .rhero-text{padding:40px var(--gut) 8px;text-align:center}
+    .rhero h1{font-size:36px}
+    .rhero p.sub{font-size:16px}
+    .rbody{grid-template-columns:minmax(0,1fr);gap:24px;padding-top:32px;padding-bottom:56px}
+    .reward{padding:26px 20px;text-align:center}
+    .reward b{font-size:23px}
+    .rbody .form h2{font-size:22px;text-align:center}
+    .out .btns{grid-template-columns:1fr}
+  }
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="wrap"><a href="index.html" class="brand"><small>GTX회천</small><strong>대광로제비앙 모아엘가</strong></a><a href="index.html" class="btn btn-ink btn-sm">단지 보기</a></div></header>
+
+<section class="rhero">
+  <div class="rhero-text"><div>
+    <p class="eyebrow">Referral</p>
+    <h1><span class="thin">아는 분께 소개하고</span><b>감사 사례 받기</b></h1>
+    <p class="sub">내 소개 링크로 들어온 분이 계약하면 자동으로 기록됩니다.</p>
+  </div></div>
+  <div class="rhero-photo"><img src="img/p37.webp" srcset="img/p37-s.webp 600w, img/p37.webp 1200w" sizes="(max-width:767px) 100vw, 50vw" alt="단지 모형 야경"></div>
+</section>
+
+<div class="wrap rbody">
+  <div class="form">
+    <h2>내 소개 링크 만들기</h2>
+    <p class="testmode" id="testMode" hidden>시험 모드: 시트가 연결되지 않아 이 기기에만 저장됩니다.</p>
+    <form id="refForm" novalidate>
+      <div class="field"><label for="rName">소개하는 분 이름</label><input id="rName" maxlength="20" placeholder="홍길동" autocomplete="name"><p class="err" id="eName"></p></div>
+      <div class="field"><label for="rPhone">휴대폰 번호</label><input id="rPhone" inputmode="tel" maxlength="13" placeholder="010-1234-5678" autocomplete="tel"><p class="err" id="ePhone"></p></div>
+      <label class="agree"><input type="checkbox" id="rAgree"><span>사례 지급 연락을 위한 개인정보 수집·이용에 동의합니다 (필수)</span></label>
+      <p class="err" id="eAgree"></p>
+      <button class="btn btn-point btn-block" type="submit" id="rSubmit">내 소개 링크 만들기</button>
+    </form>
+    <div class="out" id="out" hidden>
+      <p class="lbl">내 소개 코드</p>
+      <div class="code num" id="oCode"></div>
+      <div class="link" id="oLink"></div>
+      <div class="btns">
+        <button class="btn btn-white" id="cpLink" type="button">링크 복사</button>
+        <button class="btn btn-point" id="cpShare" type="button">카톡 공유 문구 복사</button>
+      </div>
+    </div>
+  </div>
+  <aside>
+    <div class="reward"><span id="rwNote"></span><b id="rwAmt"></b></div>
+    <div class="steps"><div><b>1</b><span>링크 만들기</span></div><div><b>2</b><span>카톡·문자로 공유</span></div><div><b>3</b><span>계약 시 사례</span></div></div>
+  </aside>
+</div>
+<div class="toast" id="toast"></div>
+<script src="js/common.js"></script>
+<script>
+(function () {
+  var HC = window.HC, C = HC.C, $ = function (id) { return document.getElementById(id); };
+  var R = C.REFERRAL || {};
+  $("rwNote").textContent = R.NOTE || "";
+  $("rwAmt").textContent = HC.isBlank(R.REWARD) ? "사례 금액은 상담사에게 문의" : R.REWARD;
+  if (HC.testMode) $("testMode").hidden = false;
+  $("rPhone").addEventListener("input", function () {
+    var v = this.value.replace(/\D/g, "").slice(0, 11);
+    this.value = v.length > 7 ? v.slice(0, 3) + "-" + v.slice(3, v.length - 4) + "-" + v.slice(-4) : v.length > 3 ? v.slice(0, 3) + "-" + v.slice(3) : v;
+  });
+  function makeCode(phone) {
+    var abc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", s = "";
+    for (var i = 0; i < 2; i++) s += abc[Math.floor(Math.random() * abc.length)];
+    return phone.replace(/\D/g, "").slice(-4) + s;
+  }
+  function baseUrl() {
+    var u = String(C.SITE_URL || "").trim();
+    if (u) return u.replace(/\/?(index\.html)?$/, "/");
+    return location.href.split("?")[0].split("#")[0].replace(/[^/]*$/, "");
+  }
+  var link = "", code = "";
+  $("refForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = $("rName").value.trim(), phone = HC.normPhone($("rPhone").value);
+    $("eName").textContent = name.length < 2 ? "이름을 2글자 이상 입력해 주세요." : "";
+    $("ePhone").textContent = phone ? "" : "010으로 시작하는 휴대폰 번호를 정확히 입력해 주세요.";
+    $("eAgree").textContent = $("rAgree").checked ? "" : "개인정보 수집·이용에 동의해 주세요.";
+    if (name.length < 2 || !phone || !$("rAgree").checked) return;
+    var saved = HC.store.get("hc_my_ref", null);
+    code = saved && saved.phone === phone ? saved.code : makeCode(phone);
+    link = baseUrl() + "?ref=" + code;
+    $("rSubmit").disabled = true; $("rSubmit").textContent = "만드는 중...";
+    HC.send({ type: "referrer", name: name, phone: phone, code: code, link: link }).then(function () {
+      HC.store.set("hc_my_ref", { phone: phone, code: code });
+      $("refForm").hidden = true; $("testMode").hidden = true; $("out").hidden = false;
+      $("oCode").textContent = code; $("oLink").textContent = link;
+    });
+  });
+  $("cpLink").onclick = function () { HC.copy(link).then(function (ok) { HC.toast(ok === false ? "복사가 안 되면 링크를 길게 눌러 복사하세요" : "링크를 복사했어요"); }); };
+  $("cpShare").onclick = function () {
+    var t = "[GTX회천 대광로제비앙 모아엘가]\n회천신도시, 2029년 입주 전까지 계약금 0원※\n전 세대 84㎡ · 2029년 6월 입주 예정 · 선착순 동·호 지정 중이라 공유해요.\n※ 계약금 대출조건이며, 개인의 신용도에 따라 대출이 제한될 수 있음 | 지원 혜택 적용 시\n단지·남은 호수 보기: " + link;
+    HC.copy(t).then(function (ok) { HC.toast(ok === false ? "복사가 안 되면 링크를 길게 눌러 복사하세요" : "카톡에 붙여넣기 하세요"); });
+  };
+})();
+</script>
+</body>
+</html>
